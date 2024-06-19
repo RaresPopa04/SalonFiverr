@@ -16,7 +16,11 @@ const userSchema = new mongoose.Schema({
     appoinments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Appointment'
-    }]
+    }],
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
 });
 
 module.exports = mongoose.model('User', userSchema);
