@@ -12,7 +12,11 @@ router.post('/create', auth, async (req, res) => {
             date,
             description,
             time,
-            status
+            name,
+            email,
+            phonenumber,
+            
+
         });
 
         await appointment.save();
@@ -37,7 +41,6 @@ router.post('/create', auth, async (req, res) => {
 router.get('/all', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('appointments');
-
         res.json(user.appointments);
     } catch (error) {
         console.log(error);

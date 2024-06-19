@@ -10,7 +10,6 @@ dotenv.config();
 const authMiddleware =async  (req, res, next) => {
 
     // console log the request headers
-
     const cookie = req.headers.cookie;
     const token = cookie.split('=')[1];
 
@@ -26,6 +25,7 @@ const authMiddleware =async  (req, res, next) => {
         if (!user) {
             return res.status(401).json({ msg: 'Invalid token' });
         }
+        
 
         req.user = decoded.user;
 

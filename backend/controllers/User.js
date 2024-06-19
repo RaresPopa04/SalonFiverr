@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
-
     try {
         let user = await User.findOne({ email });
 
@@ -34,7 +33,6 @@ router.post('/register', async (req, res) => {
             }
         };
 
-        console.log(process.env.JWT_SECRET);
 
         jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: 3600
@@ -56,6 +54,22 @@ router.post('/register', async (req, res) => {
         res.status(500).send('Server error');
     }
 
+})
+
+router.get('/check', async (req, res) => {
+    try {
+        const cookie = req.headers.cookie;
+        const token = cookie.split('=')[1];
+        if (!token) {
+            return res.sendStatus(401);
+        }
+
+        jwt.verify(token, process.env.JWT_SECRET);
+
+        return res.sendStatus(200);
+    } catch (error) {
+        return res.sendStatus(401);
+    }
 })
 
 router.post('/login', async (req, res) => {
@@ -98,6 +112,11 @@ router.post('/login', async (req, res) => {
         console.log(error);
         res.status(500).send('Server error');
     }
+})
+
+router.get('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.sendStatus(200);
 })
 
 module.exports = router;
