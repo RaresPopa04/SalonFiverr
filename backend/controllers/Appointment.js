@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/create', auth, async (req, res) => {
-    const { date, description, time, status } = req.body;
+    const { name,email,phonenumber, date, description, time, status } = req.body;
 
     try {
         const appointment = new Appointment({
@@ -26,7 +26,7 @@ router.post('/create', auth, async (req, res) => {
 
 
 
-        res.json(user);
+        res.json(appointment);
     } catch (error) {
         console.log(error);
         res.status(500).send('Server error');

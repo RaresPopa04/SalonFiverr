@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    appoinments: [{
+    appointments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Appointment'
     }],

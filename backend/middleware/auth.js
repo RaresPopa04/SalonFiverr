@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const User = require('../models/User');
 dotenv.config();
 
 
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware =async  (req, res, next) => {
 
     // console log the request headers
 
@@ -19,6 +20,12 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await User.findById(decoded.user.id);
+
+        if (!user) {
+            return res.status(401).json({ msg: 'Invalid token' });
+        }
 
         req.user = decoded.user;
 
