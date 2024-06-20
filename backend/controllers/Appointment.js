@@ -48,6 +48,24 @@ router.get('/all', auth, async (req, res) => {
     }
 });
 
+router.get('/allAppointments', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if(!user.isAdmin){
+            return res.status(401).json({ msg: 'Not authorized' });
+        }
+
+        const appointments = await Appointment.find();
+
+        res.json(appointments);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Server error');
+    }
+
+});
+
 router.delete('/delete/:id', auth, async (req, res) => {
     try {
         await Appointment.findByIdAndDelete(req.params.id);
@@ -70,18 +88,44 @@ router.delete('/delete/:id', auth, async (req, res) => {
 });
 
 
-router.put('/update/:id', auth, async (req, res) => {
+// mark reservation as completed
+router.put('/complete/:id', auth, async (req, res) => {
     try {
         const appointment = await Appointment.findById(req.params.id);
 
-        const user = await User.findById(req.user.id
-        );
+        const user = await User.findById(req.user.id);
 
         if(!user.isAdmin){
             return res.status(401).json({ msg: 'Not authorized' });
         }
 
-        appointment.status = req.body.status;
+        appointment.status = 'Completă';
+
+        await appointment.save();
+
+        res.json(appointment);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Server error');
+    }
+});
+
+router.put('/approve/:id', auth, async (req, res) => {
+    try {
+        const appointment = await Appointment.findById(req.params.id);
+
+        const user = await User.findById(req.user.id);
+
+        if(!user.isAdmin){
+            return res.status(401).json({ msg: 'Not authorized' });
+        }
+
+        if(appointment.status === 'Completă'){
+            return res.status(400).json({ msg: 'Appointment already completed' });
+        }
+
+        appointment.status = 'Aprobată';
 
         await appointment.save();
 
@@ -93,6 +137,7 @@ router.put('/update/:id', auth, async (req, res) => {
     }
 
 });
+
 
 
 module.exports = router;
